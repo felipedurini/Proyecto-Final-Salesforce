@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Check_Project_Dates</name>
+        <label>Check Project Dates</label>
+        <locationX>314</locationX>
+        <locationY>276</locationY>
+        <defaultConnectorLabel>None</defaultConnectorLabel>
+        <rules>
+            <name>Start_Date_Today</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Date_Start__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$System.OriginDateTime</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Project_to_In_Progress</targetReference>
+            </connector>
+            <label>Start Date Today</label>
+        </rules>
+        <rules>
+            <name>End_Date_Today</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Date_End__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$System.OriginDateTime</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Project_In_Completed</targetReference>
+            </connector>
+            <label>End Date Today</label>
+        </rules>
+    </decisions>
+    <description>Checks Projects&apos; Start Date and End Date. If Start Date is TODAY, it sets it to In Progress, and if End Date is TODAY it sets it to Completed.</description>
+    <environments>Default</environments>
+    <interviewLabel>Automated Progress Start {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Automated Progress Start</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Set_Project_In_Completed</name>
+        <label>Set Project In Completed</label>
+        <locationX>314</locationX>
+        <locationY>396</locationY>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Set_Project_to_In_Progress</name>
+        <label>Set Project to In Progress</label>
+        <locationX>50</locationX>
+        <locationY>396</locationY>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>188</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Project_Dates</targetReference>
+        </connector>
+        <object>Project__c</object>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2023-04-26</startDate>
+            <startTime>12:24:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

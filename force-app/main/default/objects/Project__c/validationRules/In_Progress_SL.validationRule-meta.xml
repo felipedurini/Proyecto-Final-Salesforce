@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>In_Progress_SL</fullName>
+    <active>true</active>
+    <description>Prevents a project being set to in progress if it doesnt have a squad lead</description>
+    <errorConditionFormula>ISPICKVAL(Prevent_In_Progress__c, &quot;1&quot;)</errorConditionFormula>
+    <errorMessage>The Project doesn&apos;t have a Squad Lead. Assign one to continue</errorMessage>
+</ValidationRule>

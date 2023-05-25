@@ -1,0 +1,18 @@
+<template>
+    <lightning-card>
+        <h3 class="card-title" slot="title">
+            <lightning-icon icon-name="standard:contact_list" size="medium" class="card-icon"></lightning-icon>
+            Resource Allocations
+        </h3>
+
+        <template if:true={resources}>
+            <template for:each={resources} for:item="role">
+                <c-resource-card key={role.role} role={role.role} users={role.users} related-project={project} onrefresh={refresh}></c-resource-card>
+            </template>
+        </template>
+
+        <div slot="footer">
+            <lightning-button variant="brand" label="Assign" title="Assign" icon-name="utility:add" class="slds-m-left_x-small"></lightning-button>
+        </div>
+      </lightning-card>
+</template>

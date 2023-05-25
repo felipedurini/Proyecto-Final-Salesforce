@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Hasnt_Squad_Lead</name>
+        <label>Hasnt Squad Lead</label>
+        <locationX>842</locationX>
+        <locationY>1031</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Not_Assigned_Project_In_Progress_by_Squad_Lead</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>HasntSquadLead</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Project_Manager__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>SquadSubject</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Hours_Not_Completed</name>
+        <label>Hours Not Completed</label>
+        <locationX>578</locationX>
+        <locationY>1151</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Not_Assigned_Project_In_Progress_by_Hours</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>HoursAssignedNotComplete</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Project_Manager__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>MailSubject</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>In_Progress</name>
+        <label>In Progress</label>
+        <locationX>50</locationX>
+        <locationY>1271</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Change_Flag</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>Progress</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Project_Manager__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>InProgress</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Notice_of_Loss</name>
+        <label>Notice of Loss</label>
+        <locationX>314</locationX>
+        <locationY>1271</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Not_Assigned_Project_In_Progress_by_Loss</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>TextNotificationofLoss</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Project_Manager__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>SubjectLoss</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <assignments>
+        <name>Total_Estimated_Amount</name>
+        <label>Total Estimated Amount</label>
+        <locationX>699</locationX>
+        <locationY>695</locationY>
+        <assignmentItems>
+            <assignToReference>TotalofEstimatedAmount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>TotalAmountfromResource</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_PR</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Hours_To_Project</name>
+        <label>Hours To Project</label>
+        <locationX>380</locationX>
+        <locationY>1031</locationY>
+        <defaultConnector>
+            <targetReference>Hours_Not_Completed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Hours_Assigned_Project</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Project_Hours__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.Total_Assigned_Hours__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Verification_Profit_vs_Loss</targetReference>
+            </connector>
+            <label>Hours Assigned Project</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Project_Has_Squad_Lead</name>
+        <label>Project Has Squad Lead</label>
+        <locationX>611</locationX>
+        <locationY>911</locationY>
+        <defaultConnector>
+            <targetReference>Hasnt_Squad_Lead</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Has_Squad_Lead</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Squad_Lead__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Hours_To_Project</targetReference>
+            </connector>
+            <label>Has Squad Lead</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Verification_Profit_vs_Loss</name>
+        <label>Verification Profit vs Loss</label>
+        <locationX>182</locationX>
+        <locationY>1151</locationY>
+        <defaultConnector>
+            <targetReference>Notice_of_Loss</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Verification</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Estimated_Amount__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>TotalofEstimatedAmount</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>In_Progress</targetReference>
+            </connector>
+            <label>Verification Profit vs Loss</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>TotalAmountfromResource</name>
+        <dataType>Currency</dataType>
+        <expression>{!Loop_PR.Resource__r.Rate_Hourly__c}*{!Loop_PR.Hours_Assigned_Resource__c}</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>Start of Project {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Verify Project In Progress</label>
+    <loops>
+        <name>Loop_PR</name>
+        <label>Loop PR</label>
+        <locationX>611</locationX>
+        <locationY>575</locationY>
+        <collectionReference>GetPR</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Total_Estimated_Amount</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Project_Has_Squad_Lead</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>GetPR</name>
+        <label>GetPR</label>
+        <locationX>611</locationX>
+        <locationY>455</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_PR</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Project__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Project_Resource__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Change_Flag</name>
+        <label>Change Flag</label>
+        <locationX>50</locationX>
+        <locationY>1391</locationY>
+        <inputAssignments>
+            <field>Flag_Flow__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Not_Assigned_Project_In_Progress_by_Hours</name>
+        <label>Not Assigned Project In Progress by Hours</label>
+        <locationX>578</locationX>
+        <locationY>1271</locationY>
+        <inputAssignments>
+            <field>Prevent_In_Progress__c</field>
+            <value>
+                <stringValue>2</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Pre-Kickoff</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Not_Assigned_Project_In_Progress_by_Loss</name>
+        <label>Not Assigned Project In Progress by Loss</label>
+        <locationX>314</locationX>
+        <locationY>1391</locationY>
+        <inputAssignments>
+            <field>Prevent_In_Progress__c</field>
+            <value>
+                <stringValue>3</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Pre-Kickoff</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Not_Assigned_Project_In_Progress_by_Squad_Lead</name>
+        <label>Not Assigned Project In Progress by Squad Lead</label>
+        <locationX>842</locationX>
+        <locationY>1151</locationY>
+        <inputAssignments>
+            <field>Prevent_In_Progress__c</field>
+            <value>
+                <stringValue>1</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Pre-Kickoff</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Set_Flag</name>
+        <label>Set Flag</label>
+        <locationX>611</locationX>
+        <locationY>335</locationY>
+        <connector>
+            <targetReference>GetPR</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Prevent_In_Progress__c</field>
+            <value>
+                <stringValue>0</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>485</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Flag</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </filters>
+        <object>Project__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>HasntSquadLead</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;{!$Record.Project_Manager__r.Name},&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;this is an automated email to inform you that {!$Record.Name} couldn&apos;t be set to &apos;In Progress&apos; status because it currently does not have a Squad Lead assigned. Please make sure to ammend that to be able to continue with the work progress.&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>HoursAssignedNotComplete</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;pre class=&quot;ql-syntax&quot; spellcheck=&quot;false&quot;&gt;{!$Record.Project_Manager__r.Name},
+
+this is an automated email to inform you that {!$Record.Name} couldn&apos;t be set to &apos;In Progress&apos; status because the required hours have not been assigned. Please make sure to ammend that to be able to continue with the work progress.
+
+
+
+
+
+&lt;/pre&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>InProgress</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Project in progress&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>MailSubject</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Project with missing assignations&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Progress</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Congrats {!$Record.Project_Manager__r.Name},&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;&lt;span class=&quot;ql-cursor&quot;&gt;﻿&lt;/span&gt;{!$Record.Name} has now been set In Progress!&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>SquadSubject</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Project without Squad Lead&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>SubjectLoss</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;{!$Record.Name} can be started because NO.&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>TextNotificationofLoss</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;pre class=&quot;ql-syntax&quot; spellcheck=&quot;false&quot;&gt;{!$Record.Project_Manager__r.Name},
+
+this is an automated email to inform you that {!$Record.Name} couldn&apos;t be set to &apos;In Progress&apos; status because it&apos;s in a Loss situation. Please make sure to ammend this to be able to continue with the work progress.
+
+
+&lt;/pre&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>currentItem_Filter_PR</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Project_Resource__c</objectType>
+    </variables>
+    <variables>
+        <name>Flat</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>TotalofEstimatedAmount</name>
+        <dataType>Currency</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>2</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+</Flow>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Editing_Project</fullName>
+    <active>false</active>
+    <description>Check the Project&apos;s status before allowing to edit fields. Can only be edited if the status is Pre-Kickoff.</description>
+    <errorConditionFormula>IF(
+ISPICKVAL(Status__c, &quot;In Progress&quot;) &amp;&amp; NOT(ISPICKVAL(PRIORVALUE(Status__c), &quot;Pre-Kickoff&quot;)),
+True,
+False
+)</errorConditionFormula>
+    <errorMessage>Project details can&apos;t be edited once they enter In-Progress stage.</errorMessage>
+</ValidationRule>

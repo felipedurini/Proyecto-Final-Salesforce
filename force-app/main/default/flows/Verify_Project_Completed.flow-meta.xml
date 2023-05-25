@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Sends an email if a project is set back from completed to in progress due to unfinished tasks.</description>
+        <name>Project_Email_uncompleted</name>
+        <label>Project Email uncompleted</label>
+        <locationX>264</locationX>
+        <locationY>815</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>change_status</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>emailText</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Project_Manager__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>emailSubject</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <description>If a task isnt completed it ends the flow</description>
+        <name>isCompleted</name>
+        <label>isCompleted</label>
+        <locationX>396</locationX>
+        <locationY>695</locationY>
+        <defaultConnector>
+            <targetReference>loopTasks</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Isnt_completed</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>loopTasks.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Not Started</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>loopTasks.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>In Progress</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Project_Email_uncompleted</targetReference>
+            </connector>
+            <label>Isn&apos;t completed</label>
+        </rules>
+    </decisions>
+    <description>When a project is set as completed it checks if the tasks of a project are completed and if they aren&apos;t it sets the status of the project back to in progress.</description>
+    <environments>Default</environments>
+    <interviewLabel>Verify Project Completed {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Verify Project Completed</label>
+    <loops>
+        <description>Loop the tasks of the project that triggered the flow</description>
+        <name>loopTasks</name>
+        <label>loopTasks</label>
+        <locationX>176</locationX>
+        <locationY>575</locationY>
+        <collectionReference>getTasks</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>isCompleted</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Change_Flag</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Get the tasks related to the project.</description>
+        <name>getTasks</name>
+        <label>getTasks</label>
+        <locationX>176</locationX>
+        <locationY>455</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>loopTasks</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Project__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Task__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Change_Flag</name>
+        <label>Change Flag</label>
+        <locationX>176</locationX>
+        <locationY>1367</locationY>
+        <inputAssignments>
+            <field>Flag_To_Completed__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>change_status</name>
+        <label>change status</label>
+        <locationX>264</locationX>
+        <locationY>935</locationY>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Uncompleted_Tasks__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Uncompleted_Tasks_False</name>
+        <label>Uncompleted Tasks False</label>
+        <locationX>176</locationX>
+        <locationY>335</locationY>
+        <connector>
+            <targetReference>getTasks</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Uncompleted_Tasks__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Uncompleted_Tasks_False</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <object>Project__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <description>Subject for the mail</description>
+        <name>emailSubject</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Project can&apos;t be completed&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <description>template for the mail body</description>
+        <name>emailText</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;{!$Record.Project_Manager__r.Name},&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;{!$Record.Name} can&apos;t be set to Completed because there&apos;s unfinished tasks. Please make sure to ammend that to be able to continue with the process.&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>finishedBody</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;The project {!$Record.CreatedBy.Name} was completed!&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>finishedSubject</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;Completed project&lt;/p&gt;</text>
+    </textTemplates>
+</Flow>

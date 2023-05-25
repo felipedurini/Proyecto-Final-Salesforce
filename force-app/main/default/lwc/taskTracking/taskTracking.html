@@ -1,0 +1,22 @@
+<template>
+    <lightning-card>
+
+        <lightning-button-icon icon-name="utility:refresh" size="small" slot="actions" onclick={refresh} class="toolip" variant="bare"></lightning-button-icon>
+
+        <h3 class="card-title" slot="title">
+            <lightning-icon icon-name="standard:task" size="medium" class="card-icon"></lightning-icon>
+            Task Tracking
+        </h3>
+
+        <template if:true={projects}>
+            <template for:each={projects} for:item="project">
+                <c-project-card key={project.project} project={project.project} tasks={project.tasks} onrefresh={refresh}></c-project-card>
+            </template>
+        </template>
+
+        <template if:true={image}>
+            <c-hammock-image></c-hammock-image>
+        </template>
+
+    </lightning-card>
+</template>

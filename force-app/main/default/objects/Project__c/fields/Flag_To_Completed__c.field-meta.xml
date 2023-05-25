@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Flag_To_Completed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Flag to stop a completed project being set back to in progress</description>
+    <externalId>false</externalId>
+    <label>Flag To Completed</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

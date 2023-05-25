@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>In_Progress_Profit</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(Prevent_In_Progress__c, &quot;3&quot;)</errorConditionFormula>
+    <errorMessage>Project must be profitable to be in progress.</errorMessage>
+</ValidationRule>

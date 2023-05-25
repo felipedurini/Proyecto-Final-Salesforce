@@ -1,0 +1,32 @@
+<template>
+
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+    </template>
+
+    <template if:true={preKickoff}>
+
+    <lightning-card>
+        <h3 class="allocation-title" slot="title">
+            <lightning-icon icon-name="standard:contact_list" size="medium" class="card-icon"></lightning-icon>
+            Resource Allocations
+        </h3>
+
+        <template if:true={resources}>
+            <template for:each={resources} for:item="role">
+                <c-resource-card key={role.role} role={role.role} users={role.users} total-hours={role.total} assigned-hours={role.hours} related-project={project} user-dates={userDates} onusertosendchange={handleUserToSendChange} ondeleteuser={handleUserToDelete}></c-resource-card>
+            </template>
+        </template>
+
+        <div slot="footer">
+            <lightning-button variant="brand" label="Assign" title="Assign" icon-name="utility:add" class="slds-m-left_x-small" onclick={handleSubmit}></lightning-button>
+        </div>
+      </lightning-card>
+
+    </template>
+
+    <template if:true={notKickoff}>
+        <c-cactus-image></c-cactus-image>
+    </template>
+
+</template>

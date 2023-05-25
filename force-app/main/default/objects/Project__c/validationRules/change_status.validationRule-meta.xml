@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>change_status</fullName>
+    <active>true</active>
+    <description>Only allows users to modify status and not other fields when the project is in progress or completed.</description>
+    <errorConditionFormula>AND(
+  OR(
+    ISPICKVAL(Status__c, &quot;In Progress&quot;),
+    ISPICKVAL(Status__c, &quot;Completed&quot;)
+  ),
+  NOT(ISCHANGED(Status__c)),
+  NOT(ISNEW()),
+  OR(
+    ISCHANGED(Account_Name__c),
+    ISCHANGED(Date_End__c),
+    ISCHANGED(Date_Start__c),
+    ISCHANGED(Description__c),
+    ISCHANGED(Estimated_Amount__c),
+    ISCHANGED(IsDateStart__c),
+    ISCHANGED(Opportunity__c),
+    ISCHANGED(Project_Manager__c),
+    ISCHANGED(Name),
+    ISCHANGED(RecordTypeId),
+    ISCHANGED(Squad_Lead__c),
+    ISCHANGED(Total_Assigned_Hours__c)
+  )
+)</errorConditionFormula>
+    <errorMessage>Project fields can&apos;t be changed once the project is in progress or completed.</errorMessage>
+</ValidationRule>

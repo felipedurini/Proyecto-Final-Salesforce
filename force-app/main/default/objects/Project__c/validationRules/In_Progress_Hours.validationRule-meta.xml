@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>In_Progress_Hours</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(Prevent_In_Progress__c, &quot;2&quot;)</errorConditionFormula>
+    <errorMessage>Assigned Hours must be equal to the hours of the project.</errorMessage>
+</ValidationRule>

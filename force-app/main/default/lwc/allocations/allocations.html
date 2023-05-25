@@ -1,0 +1,74 @@
+<template>
+    <lightning-card>
+
+        <!-- allocations title -->
+
+        <h3 class="allocation-title slds-grid_vertical-align-center" slot="title">
+            <lightning-icon icon-name="standard:contact_list" size="medium" class="card-icon"></lightning-icon>
+            Resource Allocations
+        </h3>
+
+        <!-- starts loop through resources roles -->
+
+        <template if:true={resources}>
+            <template for:each={resources} for:item="r">
+                
+                <!-- resource cards here -->
+                <div key={r.role}>
+                    
+                <h3 class="resource-title slds-grid_vertical-align-center" slot="title">
+                    <lightning-icon icon-name="utility:groups" size="small" class="card-icon"></lightning-icon>
+                    {r.role} - Estimated Hours: {r.Quantity_Of_Hours__c} - Assigned Hours: {r.assigned}
+                </h3>
+                <div class="slds-border_bottom resource-border slds-m-vertical_x-small"></div>
+
+                <!-- starts loop through each resource role -->
+
+                <template if:true={r.users}> 
+                    <template for:each={r.users} for:item="user" for:index="index">
+
+                        <div class="slds-grid slds-grid_align-space slds-grid_vertical-align-center container" key={user.Id}>
+                            <div class="slds-col slds-size_4-of-12 rate">
+                                <div class="slds-grid slds-grid_vertical-align-center resource">
+                                    <div class="slds-col slds-size_1-of-12 checkbox">
+                                        <lightning-input class="slds-align-middle" type="checkbox" value={user.Id} onchange={handleCheckboxChange} name={user.Id}></lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_11-of-12 name">
+                                        <p>{user.Name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_2-of-12 rate">
+                                <p>$ {user.Rate_Hourly__c} p/hour</p>
+                            </div>
+                            <div class="slds-col slds-size_5-of-12 picker">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <div class="slds-col slds-size_11-of-12 name">
+                                        <c-date-picker min={minDate} max={maxDate} onsendstartdate={updateStartDate} onsendenddate={updateEndDate} class="picker" value={user.Id}></c-date-picker>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-12 toolip">
+                                        <c-pop-up user={userDates} value={user.Id}></c-pop-up>
+                                    </div>
+                                </div>    
+                            </div>
+                            <!-- <div class="slds-col slds-size_1-of-12 hours">
+                                <p><lightning-formatted-text id={user.Id}>aaa</lightning-formatted-text></p>
+                            </div> -->
+                        </div>
+                    </template>
+                </template>
+                </div>
+
+            <!-- ends loop through each resource role -->
+
+            </template>
+        </template>
+
+        <!-- ends loop through resource roles -->
+        <!-- submit button -->
+
+        <div slot="footer">
+            <lightning-button variant="brand" label="Assign" title="Assign" icon-name="utility:add" class="slds-m-left_x-small" onclick={handleSubmit}></lightning-button>
+        </div>
+      </lightning-card>
+</template>

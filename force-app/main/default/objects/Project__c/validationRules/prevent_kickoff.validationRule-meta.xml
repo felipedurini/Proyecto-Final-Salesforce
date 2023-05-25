@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>prevent_kickoff</fullName>
+    <active>true</active>
+    <description>Prevents a project being set back to kick-off if it is in progress or completed.</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(Status__c, &quot;Pre-Kickoff&quot;),
+Flag_Flow__c,
+OR(
+ISPICKVAL(PRIORVALUE(Status__c), &quot;Completed&quot;),
+ISPICKVAL(PRIORVALUE(Status__c), &quot;In Progress&quot;)
+)
+)</errorConditionFormula>
+    <errorMessage>Projects can&apos;t be set back to kick-off if they are in progress or completed.</errorMessage>
+</ValidationRule>
